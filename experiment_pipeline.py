@@ -352,6 +352,17 @@ html_content = f'''<!DOCTYPE html>
             <div class="click-hint" onclick="openFullscreen()">⛶ FULLSCREEN</div>
         </div>
         
+        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: left; font-size: 14px;">
+            <h5 style="margin: 0 0 10px 0; color: #4CAF50;">SegFormer-B5 Neural Network Metrics (Zero-Shot Cityscapes)</h5>
+            <p style="margin: 0 0 10px 0; color: #ccc;"><i>Note: Real-time loss/error is not calculated during inference as Ground Truth masks are absent for the target dataset. The accuracy is based on the validation from the original architecture (Xie et al., 2021).</i></p>
+            <p style="margin: 0 0 5px 0;"><strong>Model:</strong> SegFormer-B5 (NVIDIA)</p>
+            <p style="margin: 0 0 15px 0;"><strong>Reported Accuracy:</strong> mIoU = 84.0%</p>
+            <div style="text-align: center; margin-bottom: 10px;">
+                \\[ mIoU = \\frac{{1}}{{N_{{cls}}}} \\sum_{{i=1}}^{{N_{{cls}}}} \\frac{{TP_i}}{{TP_i + FP_i + FN_i}} \\]
+            </div>
+            <p style="margin: 0; font-size: 12px; color: #888;">Where \\(TP\\) = True Positives, \\(FP\\) = False Positives, \\(FN\\) = False Negatives, \\(N_{{cls}}\\) = Number of classes.</p>
+        </div>
+        
         <div>
             <h3 style="text-align:center;">Dynamic Local GVI Calculation</h3>
             <div class="formula-box" id="dynamic-formula">
