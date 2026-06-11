@@ -74,7 +74,8 @@ folium.raster_layers.ImageOverlay(
 ).add_to(ndvi_map)
 
 # Add an arrow pointing exactly to the center using precise DivIcon anchoring
-arrow_html = '<div class="custom-arrow" style="font-size: 24px; color: gray; text-shadow: 1px 1px 2px white; line-height: 24px; text-align: center;">▼</div>'
+# We use an UP arrow (▲) so it represents 'North' at 0 degrees rotation.
+arrow_html = '<div id="map-direction-arrow" class="custom-arrow" style="font-size: 24px; color: gray; text-shadow: 1px 1px 2px white; line-height: 24px; text-align: center; transform-origin: 50% 100%; transition: transform 0.3s ease;">▲</div>'
 
 folium.Marker(
     location=[200, 200],
@@ -330,7 +331,7 @@ html_content = f'''<!DOCTYPE html>
                 <p style="text-align:center; font-size:12px; margin-top:0; color:gray;">Coordinates: {LAT}, {LON} | NDVI = {ndvi_val}</p>
                 <div class="map-container">
                     <!-- Leaflet map for zooming NDVI image cleanly -->
-                    <iframe srcdoc='{ndvi_map_html.replace("'", "&#39;")}' width="100%" height="100%" frameborder="0"></iframe>
+                    <iframe id="ndvi-iframe" srcdoc='{ndvi_map_html.replace("'", "&#39;")}' width="100%" height="100%" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
@@ -452,6 +453,20 @@ html_content = f'''<!DOCTYPE html>
             gmapsLink.href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${{POINT_LAT}},${{POINT_LON}}&heading=${{current.heading}}`;
             
             angleEl.innerText = `Azimuth: ${{current.heading}}°`;
+            
+            // Rotate the arrow on the NDVI map
+            try {{
+                const ndviIframe = document.getElementById('ndvi-iframe');
+                if (ndviIframe && ndviIframe.contentWindow && ndviIframe.contentWindow.document) {{
+                    const arrow = ndviIframe.contentWindow.document.getElementById('map-direction-arrow');
+                    if (arrow) {{
+                        arrow.style.transform = `rotate(${{current.heading}}deg)`;
+                    }}
+                }}
+            }} catch (e) {{
+                // Cross-origin might block this if viewed locally without a server in some browsers,
+                // but generally srcdoc allows it.
+            }}
             
             const formulaString = `\\\\[ GVI_{{${{current.heading}}^\\\\circ}} = \\\\frac{{Area_{{veg}}}}{{Area_{{total}}}} \\\\times 100 = \\\\frac{{${{current.veg_area}}}}{{${{current.total_area}}}} \\\\times 100 = ${{current.gvi}}\\\\% \\\\]`;
             dynamicFormula.innerHTML = formulaString;
