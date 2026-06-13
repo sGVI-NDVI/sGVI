@@ -200,7 +200,7 @@
             tile_layer_a2e124e13fe52dce79f8dbcc97f75d71.addTo(map_466ee76075e490bb08a99061ec17fbaa);
         
     
-            var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
+            var image_overlay_ndvi_new = L.imageOverlay("https://raw.githubusercontent.com/sGVI-NDVI/sGVI/master/ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
                 {
   "opacity": 0.7,
@@ -415,7 +415,7 @@ body:hover .custom-arrow { opacity: 0 !important; }
 
         
     
-            var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
+            var image_overlay_ndvi_new = L.imageOverlay("https://raw.githubusercontent.com/sGVI-NDVI/sGVI/master/ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
                 {
 }
@@ -27688,7 +27688,7 @@ function buildSrc() {
     if (!showMask) {
         src = src.replace('experiment_output/masked_', 'final_dataset/');
     }
-    return src;
+    return "https://raw.githubusercontent.com/sGVI-NDVI/sGVI/master/" + src;
 }
 
 function goToPoint(val) {
