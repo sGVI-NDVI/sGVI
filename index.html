@@ -545,16 +545,22 @@ body:hover .custom-arrow { opacity: 0 !important; }
     </div>
     <p style=" text-align:center; font-size: 14px; margin-top: -10px;">Where \( sGVI_i \) denotes the standardized index for spatial point \( i \).</p>
 
-    <p><strong>4. Landscape Irrigation Water Demand (LIMP Model):</strong></p>
-    <div class="formula-box" id="formula-kd">
-        $$ K_d = \begin{cases} \sin\left(\frac{\pi \times GVI_{total}}{140}\right), &amp; \text{if } GVI_{total} \lt 70\\ 1, &amp; \text{if } GVI_{total} \ge 70 \end{cases} $$
+    <p><strong>4. Actual Evapotranspiration (AET) via FAO-56 Penman-Monteith:</strong></p>
+    <div style="text-align: center; margin-bottom: 15px; font-family: sans-serif;">
+        <label for="meteo-date"><strong>Meteorological Date: </strong></label>
+        <input type="date" id="meteo-date" value="">
+        <span id="meteo-status" style="font-size: 12px; color: #007bff; margin-left: 10px; font-weight: bold;">Loading weather data from Open-Meteo API...</span>
     </div>
-    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">Where \( K_d \) is the Density Factor, directly derived from the Green View Index (\( GVI_{total} \)) acting as a proxy for the percentage of ground shaded by green vegetation (\( C_g \)).</p>
+
+    <div class="formula-box" id="formula-pet">
+        $$ PET = \frac{0.408\Delta(R_n - G) + \gamma \frac{900}{T+273} u_2 (e_s - e_a)}{\Delta + \gamma(1 + 0.34u_2)} $$
+    </div>
+    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">Where \( PET \) is the Reference Potential Evapotranspiration. Weather data is dynamically fetched for Angren via the <a href="https://open-meteo.com" target="_blank">Open-Meteo API</a> for the selected date.</p>
     
-    <div class="formula-box" id="formula-et">
-        $$ ET_{PLT} = ET_r \times K_v \times K_d \times K_{sm} $$
+    <div class="formula-box" id="formula-aet">
+        $$ AET = PET \times \frac{S_{RZ}}{Sr_{max}} $$
     </div>
-    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">Where \( ET_{PLT} \) is the estimated Landscape Evapotranspiration (water demand in mm/day), \( ET_r \) is the Reference Evapotranspiration, \( K_v \) is the Vegetation Factor, and \( K_{sm} \) is the Managed Stress Factor.</p>
+    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">Where \( AET \) is the Actual Evapotranspiration (water demand in mm/day), and the root zone storage capacity ratio \( \frac{S_{RZ}}{Sr_{max}} \) is approximated by the normalized Green View Index (\( \frac{GVI_{total}}{100} \)) acting as a proxy for vegetation biomass and root development.</p>
 
 </div>
 
@@ -27799,32 +27805,24 @@ function updateView() {
     if (f_w) f_w.innerHTML = '$$ W_i = \\frac{l_j}{L_{network}} = \\frac{ ' + (p.l_j || 0) + ' }{121642.45} $$';
     if (f_sgvi) f_sgvi.innerHTML = '$$ sGVI_i = GVI_{total} \\times W_i = ' + gvi + ' \\times \\left( \\frac{ ' + (p.l_j || 0) + ' }{121642.45} \\right) = ' + p.sgvi + '\\% $$';
 
-    var f_kd = document.getElementById("formula-kd");
-    var f_et = document.getElementById("formula-et");
+    var f_pet = document.getElementById("formula-pet");
+    var f_aet = document.getElementById("formula-aet");
     var gvi_num = parseFloat(gvi);
     if (!isNaN(gvi_num)) {
-        var kd_val = (gvi_num < 70) ? Math.sin((Math.PI * gvi_num) / 140) : 1.0;
-        var kd_str = kd_val.toFixed(3);
-        var et_r = 7.5;
-        var k_v = 1.2;
-        var k_sm = 1.0;
-        var et_plt = et_r * k_v * kd_val * k_sm;
-        var et_str = et_plt.toFixed(2);
-
-        if (f_kd) {
-            if (gvi_num < 70) {
-                f_kd.innerHTML = '$$ K_d = \\sin\\left(\\frac{\\pi \\times GVI_{total}}{140}\\right) = \\sin\\left(\\frac{\\pi \\times ' + gvi_num + '}{140}\\right) = ' + kd_str + ' $$';
-            } else {
-                f_kd.innerHTML = '$$ K_d = 1.0 \\quad (GVI_{total} \\ge 70) $$';
-            }
+        var s_ratio = (gvi_num / 100).toFixed(3);
+        var pet_str = window.currentPET ? window.currentPET.toFixed(2) : "0.00";
+        var aet_val = (window.currentPET * (gvi_num / 100)).toFixed(2);
+        
+        if (f_pet) {
+            f_pet.innerHTML = '$$ PET = \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} = ' + pet_str + ' \\text{ mm/day} $$';
         }
-        if (f_et) {
-            f_et.innerHTML = '$$ ET_{PLT} = ET_r \\times K_v \\times K_d \\times K_{sm} = ' + et_r + ' \\times ' + k_v + ' \\times ' + kd_str + ' \\times ' + k_sm + ' = ' + et_str + ' \\text{ mm/day} $$';
+        if (f_aet) {
+            f_aet.innerHTML = '$$ AET = PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} = ' + pet_str + ' \\times ' + s_ratio + ' = ' + aet_val + ' \\text{ mm/day} $$';
         }
     }
 
     if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi, f_kd, f_et]).catch(function (err) { console.log('MathJax error:', err.message); });
+        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi, f_pet, f_aet]).catch(function (err) { console.log('MathJax error:', err.message); });
     }
 
     }
@@ -27975,6 +27973,53 @@ document.addEventListener('DOMContentLoaded', function() {
         // Scroll smoothly to viewer
         document.getElementById('viewer').scrollIntoView({behavior: 'smooth', block: 'center'});
     });
+});
+</script>
+<script>
+window.currentPET = 7.5; // fallback
+function fetchMeteoData(dateStr) {
+    var statusEl = document.getElementById('meteo-status');
+    if (statusEl) statusEl.innerText = "Fetching data...";
+    var lat = 41.0167;
+    var lon = 70.1333;
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&start_date=' + dateStr + '&end_date=' + dateStr + '&daily=et0_fao_evapotranspiration&timezone=auto';
+    
+    var dateObj = new Date(dateStr);
+    var today = new Date();
+    var diffDays = Math.ceil((today - dateObj) / (1000 * 60 * 60 * 24));
+    if (diffDays > 5) {
+        url = 'https://archive-api.open-meteo.com/v1/archive?latitude=' + lat + '&longitude=' + lon + '&start_date=' + dateStr + '&end_date=' + dateStr + '&daily=et0_fao_evapotranspiration&timezone=auto';
+    }
+    
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.daily && data.daily.et0_fao_evapotranspiration && data.daily.et0_fao_evapotranspiration.length > 0) {
+                window.currentPET = data.daily.et0_fao_evapotranspiration[0] || 7.5;
+                if (statusEl) statusEl.innerText = "Data loaded for " + dateStr + " (PET = " + window.currentPET.toFixed(2) + " mm/day)";
+                if (typeof updateView === 'function') updateView();
+            } else {
+                if (statusEl) statusEl.innerText = "Error fetching data.";
+            }
+        })
+        .catch(err => {
+            if (statusEl) statusEl.innerText = "API Error.";
+        });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    var dateInput = document.getElementById('meteo-date');
+    if(dateInput) {
+        var today = new Date();
+        today.setDate(today.getDate() - 1); 
+        var todayStr = today.toISOString().split('T')[0];
+        dateInput.value = todayStr;
+        dateInput.max = new Date().toISOString().split('T')[0];
+        dateInput.addEventListener('change', function(e) {
+            fetchMeteoData(e.target.value);
+        });
+        fetchMeteoData(todayStr);
+    }
 });
 </script>
 </body>
