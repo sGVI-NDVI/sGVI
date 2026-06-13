@@ -201,21 +201,7 @@
         
     
             
-            var tile_layer_ndvi = L.tileLayer(
-                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-                  "minZoom": 0,
-                  "maxZoom": 19,
-                  "maxNativeZoom": 19,
-                  "noWrap": false,
-                  "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-                  "subdomains": "abc",
-                  "detectRetina": false,
-                  "tms": false,
-                  "opacity": 1,
-                }
-            );
-            tile_layer_ndvi.addTo(map_c346b429699ec990174b11dec116f430);
+            
             
             var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
@@ -433,21 +419,7 @@ body:hover .custom-arrow { opacity: 0 !important; }
         
     
             
-            var tile_layer_ndvi = L.tileLayer(
-                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-                  "minZoom": 0,
-                  "maxZoom": 19,
-                  "maxNativeZoom": 19,
-                  "noWrap": false,
-                  "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-                  "subdomains": "abc",
-                  "detectRetina": false,
-                  "tms": false,
-                  "opacity": 1,
-                }
-            );
-            tile_layer_ndvi.addTo(map_c346b429699ec990174b11dec116f430);
+            
             
             var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
