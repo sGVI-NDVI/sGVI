@@ -563,7 +563,7 @@ body:hover .custom-arrow { opacity: 0 !important; }
         $$ AET = PET \times \frac{S_{RZ}}{Sr_{max}} $$
     </div>
     <p style="text-align:justify; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">
-        Where \( S_{RZ} \) and \( S_{rmax} \) are the storage and maximum capacity of the root zone, respectively; \( PET \) is the reference potential evapotranspiration. The root zone storage capacity ratio \( \frac{S_{RZ}}{Sr_{max}} \) is approximated by the normalized Green View Index (\( \frac{GVI_{total}}{100} \)) acting as a proxy for vegetation biomass and root development. <strong>\( V_{irrigation} \)</strong> is the daily volumetric water demand (Liters/day), calculated by multiplying the spatially averaged \( AET \) (mm/day) by the total physical area of the road sector (\( Area_{total} \)) assuming a standard 30m Voronoi cell corridor along the segment length. <em>Note: 1000 Liters = 1 cubic meter. An entire block may legitimately require half a water truck (~4000L) per day in summer!</em>
+        Where \( S_{RZ} \) and \( S_{rmax} \) are the storage and maximum capacity of the root zone, respectively; \( PET \) is the reference potential evapotranspiration. The root zone storage capacity ratio \( \frac{S_{RZ}}{Sr_{max}} \) is approximated by the normalized Green View Index (\( \frac{GVI_{current}}{100} \)) acting as a proxy for vegetation biomass and root development. <strong>\( V_{irrigation} \)</strong> is the daily volumetric water demand (Liters/day), calculated by multiplying the spatially averaged \( AET \) (mm/day) by the total physical area of the road sector (\( Area_{total} \)) assuming a standard 30m Voronoi cell corridor along the segment length. <em>Note: 1000 Liters = 1 cubic meter. An entire block may legitimately require half a water truck (~4000L) per day in summer!</em>
     </p>
 
 </div>
@@ -27841,9 +27841,12 @@ function updateView() {
                 f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + sub_str + ' = ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
             }
             if (f_aet) {
+                var current_gvi_num = parseFloat(heading_gvi);
+                if (isNaN(current_gvi_num)) current_gvi_num = 0;
+                var aet_val_cur = (window.currentPET * (current_gvi_num / 100)).toFixed(2);
                 var area_total = ((p.l_j || 0) * 30).toFixed(1);
-                var vol_liters = (aet_val * parseFloat(area_total)).toFixed(1);
-                f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + gvi_num.toFixed(2) + '}{100} = ' + aet_val + ' \\text{ mm/day} \\\\[15pt] V_{irrigation} &= AET \\times Area_{total} = ' + aet_val + ' \\times ' + area_total + ' = ' + vol_liters + ' \\text{ Liters/day} \\end{aligned} $$';
+                var vol_liters = (aet_val_cur * parseFloat(area_total)).toFixed(1);
+                f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{current}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + current_gvi_num.toFixed(2) + '}{100} = ' + aet_val_cur + ' \\text{ mm/day} \\\\[15pt] V_{irrigation} &= AET \\times Area_{total} = ' + aet_val_cur + ' \\times ' + area_total + ' = ' + vol_liters + ' \\text{ Liters/day} \\end{aligned} $$';
             }
             if (window.MathJax && MathJax.typesetPromise) {
                 MathJax.typesetPromise([f_pet, f_aet]).catch(function (err) { console.log('MathJax error:', err.message); });
