@@ -27814,10 +27814,10 @@ function updateView() {
         var aet_val = (window.currentPET * (gvi_num / 100)).toFixed(2);
         
         if (f_pet) {
-            f_pet.innerHTML = '$$ PET = \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} = ' + pet_str + ' \\text{ mm/day} $$';
+            f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
         }
         if (f_aet) {
-            f_aet.innerHTML = '$$ AET = PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} = ' + pet_str + ' \\times ' + s_ratio + ' = ' + aet_val + ' \\text{ mm/day} $$';
+            f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + gvi_num.toFixed(2) + '}{100} = ' + aet_val + ' \\text{ mm/day} \\end{aligned} $$';
         }
     }
 
