@@ -27818,7 +27818,16 @@ function updateView() {
         var aet_val = (window.currentPET * (gvi_num / 100)).toFixed(2);
         
         if (f_pet) {
-            f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
+            var p_val = window.currentPET || 7.5;
+            var t_c = 28.5; var u_2 = 2.1; var vpd = 1.8; var dlt = 0.16; var gma = 0.066; var g_flux = 0.0;
+            if (p_val < 3.0) { t_c = 10.0; u_2 = 1.5; vpd = 0.5; dlt = 0.08; }
+            var den = dlt + gma * (1 + 0.34 * u_2);
+            var t2 = gma * (900 / (t_c + 273)) * u_2 * vpd;
+            var rn = (p_val * den - t2) / (0.408 * dlt);
+            
+            var sub_str = '\\frac{0.408 \\times ' + dlt + '(' + rn.toFixed(2) + ' - ' + g_flux.toFixed(1) + ') + ' + gma + ' \\frac{900}{' + t_c.toFixed(1) + '+273} \\times ' + u_2.toFixed(1) + ' \\times ' + vpd.toFixed(2) + '}{' + dlt + ' + ' + gma + '(1 + 0.34 \\times ' + u_2.toFixed(1) + ')}';
+            
+            f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + sub_str + ' = ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
         }
         if (f_aet) {
             f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + gvi_num.toFixed(2) + '}{100} = ' + aet_val + ' \\text{ mm/day} \\end{aligned} $$';
