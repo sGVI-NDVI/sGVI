@@ -27799,8 +27799,32 @@ function updateView() {
     if (f_w) f_w.innerHTML = '$$ W_i = \\frac{l_j}{L_{network}} = \\frac{ ' + (p.l_j || 0) + ' }{121642.45} $$';
     if (f_sgvi) f_sgvi.innerHTML = '$$ sGVI_i = GVI_{total} \\times W_i = ' + gvi + ' \\times \\left( \\frac{ ' + (p.l_j || 0) + ' }{121642.45} \\right) = ' + p.sgvi + '\\% $$';
 
+    var f_kd = document.getElementById("formula-kd");
+    var f_et = document.getElementById("formula-et");
+    var gvi_num = parseFloat(gvi);
+    if (!isNaN(gvi_num)) {
+        var kd_val = (gvi_num < 70) ? Math.sin((Math.PI * gvi_num) / 140) : 1.0;
+        var kd_str = kd_val.toFixed(3);
+        var et_r = 7.5;
+        var k_v = 1.2;
+        var k_sm = 1.0;
+        var et_plt = et_r * k_v * kd_val * k_sm;
+        var et_str = et_plt.toFixed(2);
+
+        if (f_kd) {
+            if (gvi_num < 70) {
+                f_kd.innerHTML = '$$ K_d = \\sin\\left(\\frac{\\pi \\times ' + gvi_num + '}{140}\\right) = ' + kd_str + ' $$';
+            } else {
+                f_kd.innerHTML = '$$ K_d = 1.0 \\quad (GVI_{total} \\ge 70) $$';
+            }
+        }
+        if (f_et) {
+            f_et.innerHTML = '$$ ET_{PLT} = ' + et_r + ' \\times ' + k_v + ' \\times ' + kd_str + ' \\times ' + k_sm + ' = ' + et_str + ' \\text{ mm/day} $$';
+        }
+    }
+
     if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi]).catch(function (err) { console.log('MathJax error:', err.message); });
+        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi, f_kd, f_et]).catch(function (err) { console.log('MathJax error:', err.message); });
     }
 
     }
