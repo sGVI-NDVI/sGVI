@@ -200,6 +200,23 @@
             tile_layer_a2e124e13fe52dce79f8dbcc97f75d71.addTo(map_466ee76075e490bb08a99061ec17fbaa);
         
     
+            
+            var tile_layer_ndvi = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                  "minZoom": 0,
+                  "maxZoom": 19,
+                  "maxNativeZoom": 19,
+                  "noWrap": false,
+                  "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+                  "subdomains": "abc",
+                  "detectRetina": false,
+                  "tms": false,
+                  "opacity": 1,
+                }
+            );
+            tile_layer_ndvi.addTo(map_c346b429699ec990174b11dec116f430);
+            
             var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
                 {
@@ -403,7 +420,7 @@ body:hover .custom-arrow { opacity: 0 !important; }
                     center: [40.963087, 69.951901],
                     
                     ...{
-  "zoom": 1,
+  "zoom": 14,
   "zoomControl": true,
   "preferCanvas": false,
 }
@@ -415,6 +432,23 @@ body:hover .custom-arrow { opacity: 0 !important; }
 
         
     
+            
+            var tile_layer_ndvi = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                  "minZoom": 0,
+                  "maxZoom": 19,
+                  "maxNativeZoom": 19,
+                  "noWrap": false,
+                  "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+                  "subdomains": "abc",
+                  "detectRetina": false,
+                  "tms": false,
+                  "opacity": 1,
+                }
+            );
+            tile_layer_ndvi.addTo(map_c346b429699ec990174b11dec116f430);
+            
             var image_overlay_ndvi_new = L.imageOverlay("ndvi_overlay_voronoi_30m.png",
                 [[40.96461426030477, 69.95396713106902], [41.00629608948792, 70.08889408674378]],
                 {
