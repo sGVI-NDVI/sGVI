@@ -555,12 +555,16 @@ body:hover .custom-arrow { opacity: 0 !important; }
     <div class="formula-box" id="formula-pet">
         $$ PET = \frac{0.408\Delta(R_n - G) + \gamma \frac{900}{T+273} u_2 (e_s - e_a)}{\Delta + \gamma(1 + 0.34u_2)} $$
     </div>
-    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">Where \( PET \) is the Reference Potential Evapotranspiration. Weather data is dynamically fetched for Angren via the <a href="https://open-meteo.com" target="_blank">Open-Meteo API</a> for the selected date.</p>
+    <p style="text-align:justify; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
+        Where \( PET \) is the reference evapotranspiration (mm day⁻¹); \( R_n \) is the net radiation (MJ m⁻² day⁻¹); \( G \) is the soil heat flux density (MJ m⁻² day⁻¹); \( T \) is the mean daily air temperature at 2 m (°C); \( u_2 \) is the wind speed at 2 m (m s⁻¹); \( e_s \) and \( e_a \) are the saturation and actual vapour pressure (kPa); \( \Delta \) is the slope of the vapour pressure curve (kPa °C⁻¹); and \( \gamma \) is the psychrometric constant (kPa °C⁻¹), estimated from daily surface pressure. Weather data is dynamically fetched for Angren via the <a href="https://open-meteo.com" target="_blank">Open-Meteo API</a> for the selected date.
+    </p>
     
     <div class="formula-box" id="formula-aet">
         $$ AET = PET \times \frac{S_{RZ}}{Sr_{max}} $$
     </div>
-    <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">Where \( AET \) is the Actual Evapotranspiration (water demand in mm/day), and the root zone storage capacity ratio \( \frac{S_{RZ}}{Sr_{max}} \) is approximated by the normalized Green View Index (\( \frac{GVI_{total}}{100} \)) acting as a proxy for vegetation biomass and root development.</p>
+    <p style="text-align:justify; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">
+        Where \( S_{RZ} \) and \( S_{rmax} \) are the storage and maximum capacity of the root zone, respectively; \( PET \) is the reference potential evapotranspiration. The root zone storage capacity ratio \( \frac{S_{RZ}}{Sr_{max}} \) is approximated by the normalized Green View Index (\( \frac{GVI_{total}}{100} \)) acting as a proxy for vegetation biomass and root development.
+    </p>
 
 </div>
 
