@@ -27813,13 +27813,13 @@ function updateView() {
 
         if (f_kd) {
             if (gvi_num < 70) {
-                f_kd.innerHTML = '$$ K_d = \\sin\\left(\\frac{\\pi \\times ' + gvi_num + '}{140}\\right) = ' + kd_str + ' $$';
+                f_kd.innerHTML = '$$ K_d = \\sin\\left(\\frac{\\pi \\times GVI_{total}}{140}\\right) = \\sin\\left(\\frac{\\pi \\times ' + gvi_num + '}{140}\\right) = ' + kd_str + ' $$';
             } else {
                 f_kd.innerHTML = '$$ K_d = 1.0 \\quad (GVI_{total} \\ge 70) $$';
             }
         }
         if (f_et) {
-            f_et.innerHTML = '$$ ET_{PLT} = ' + et_r + ' \\times ' + k_v + ' \\times ' + kd_str + ' \\times ' + k_sm + ' = ' + et_str + ' \\text{ mm/day} $$';
+            f_et.innerHTML = '$$ ET_{PLT} = ET_r \\times K_v \\times K_d \\times K_{sm} = ' + et_r + ' \\times ' + k_v + ' \\times ' + kd_str + ' \\times ' + k_sm + ' = ' + et_str + ' \\text{ mm/day} $$';
         }
     }
 
