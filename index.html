@@ -547,12 +547,12 @@ body:hover .custom-arrow { opacity: 0 !important; }
 
     <p><strong>4. Landscape Irrigation Water Demand (LIMP Model):</strong></p>
     <div class="formula-box" id="formula-kd">
-         K_d = \begin{cases} \sin\left(\frac{\pi \times GVI_{total}}{140}\right), & \text{if } GVI_{total} < 70\\ 1, & \text{if } GVI_{total} \ge 70 \end{cases} 
+        $$ K_d = \begin{cases} \sin\left(\frac{\pi \times GVI_{total}}{140}\right), &amp; \text{if } GVI_{total} \lt 70\\ 1, &amp; \text{if } GVI_{total} \ge 70 \end{cases} $$
     </div>
     <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">Where \( K_d \) is the Density Factor, directly derived from the Green View Index (\( GVI_{total} \)) acting as a proxy for the percentage of ground shaded by green vegetation (\( C_g \)).</p>
     
     <div class="formula-box" id="formula-et">
-         ET_{PLT} = ET_r \times K_v \times K_d \times K_{sm} 
+        $$ ET_{PLT} = ET_r \times K_v \times K_d \times K_{sm} $$
     </div>
     <p style="text-align:center; font-size: 14px; margin-top: -10px; margin-bottom: 40px;">Where \( ET_{PLT} \) is the estimated Landscape Evapotranspiration (water demand in mm/day), \( ET_r \) is the Reference Evapotranspiration, \( K_v \) is the Vegetation Factor, and \( K_{sm} \) is the Managed Stress Factor.</p>
 
