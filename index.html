@@ -27812,30 +27812,41 @@ function updateView() {
     var f_pet = document.getElementById("formula-pet");
     var f_aet = document.getElementById("formula-aet");
     var gvi_num = parseFloat(gvi);
-    if (!isNaN(gvi_num)) {
-        var s_ratio = (gvi_num / 100).toFixed(3);
-        var pet_str = window.currentPET ? window.currentPET.toFixed(2) : "0.00";
-        var aet_val = (window.currentPET * (gvi_num / 100)).toFixed(2);
-        
-        if (f_pet) {
-            var p_val = window.currentPET || 7.5;
-            var t_c = 28.5; var u_2 = 2.1; var vpd = 1.8; var dlt = 0.16; var gma = 0.066; var g_flux = 0.0;
-            if (p_val < 3.0) { t_c = 10.0; u_2 = 1.5; vpd = 0.5; dlt = 0.08; }
-            var den = dlt + gma * (1 + 0.34 * u_2);
-            var t2 = gma * (900 / (t_c + 273)) * u_2 * vpd;
-            var rn = (p_val * den - t2) / (0.408 * dlt);
-            
-            var sub_str = '\\frac{0.408 \\times ' + dlt + '(' + rn.toFixed(2) + ' - ' + g_flux.toFixed(1) + ') + ' + gma + ' \\frac{900}{' + t_c.toFixed(1) + '+273} \\times ' + u_2.toFixed(1) + ' \\times ' + vpd.toFixed(2) + '}{' + dlt + ' + ' + gma + '(1 + 0.34 \\times ' + u_2.toFixed(1) + ')}';
-            
-            f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + sub_str + ' = ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
-        }
-        if (f_aet) {
-            f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + gvi_num.toFixed(2) + '}{100} = ' + aet_val + ' \\text{ mm/day} \\end{aligned} $$';
-        }
-    }
 
     if (window.MathJax && MathJax.typesetPromise) {
-        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi, f_pet, f_aet]).catch(function (err) { console.log('MathJax error:', err.message); });
+        MathJax.typesetPromise([f_current, f_gvi, f_w, f_sgvi]).catch(function (err) { console.log('MathJax error:', err.message); });
+    }
+
+    if (!isNaN(gvi_num) && typeof fetchMeteoData === 'function') {
+        var p_lat = p.real_lat || p.lat || 41.0167;
+        var p_lon = p.real_lon || p.lon || 70.1333;
+        var dInput = document.getElementById('meteo-date');
+        var dStr = dInput ? dInput.value : new Date().toISOString().split('T')[0];
+        
+        fetchMeteoData(dStr, p_lat, p_lon, function() {
+            var s_ratio = (gvi_num / 100).toFixed(3);
+            var pet_str = window.currentPET ? window.currentPET.toFixed(2) : "0.00";
+            var aet_val = (window.currentPET * (gvi_num / 100)).toFixed(2);
+            
+            if (f_pet) {
+                var p_val = window.currentPET || 7.5;
+                var t_c = 28.5; var u_2 = 2.1; var vpd = 1.8; var dlt = 0.16; var gma = 0.066; var g_flux = 0.0;
+                if (p_val < 3.0) { t_c = 10.0; u_2 = 1.5; vpd = 0.5; dlt = 0.08; }
+                var den = dlt + gma * (1 + 0.34 * u_2);
+                var t2 = gma * (900 / (t_c + 273)) * u_2 * vpd;
+                var rn = (p_val * den - t2) / (0.408 * dlt);
+                
+                var sub_str = '\\frac{0.408 \\times ' + dlt + '(' + rn.toFixed(2) + ' - ' + g_flux.toFixed(1) + ') + ' + gma + ' \\frac{900}{' + t_c.toFixed(1) + '+273} \\times ' + u_2.toFixed(1) + ' \\times ' + vpd.toFixed(2) + '}{' + dlt + ' + ' + gma + '(1 + 0.34 \\times ' + u_2.toFixed(1) + ')}';
+                
+                f_pet.innerHTML = '$$ \\begin{aligned} PET &= \\frac{0.408\\Delta(R_n - G) + \\gamma \\frac{900}{T+273} u_2 (e_s - e_a)}{\\Delta + \\gamma(1 + 0.34u_2)} \\\\[10pt] PET &= ' + sub_str + ' = ' + pet_str + ' \\text{ mm/day} \\end{aligned} $$';
+            }
+            if (f_aet) {
+                f_aet.innerHTML = '$$ \\begin{aligned} AET &= PET \\times \\frac{S_{RZ}}{Sr_{max}} \\approx PET \\times \\frac{GVI_{total}}{100} \\\\[10pt] AET &= ' + pet_str + ' \\times \\frac{' + gvi_num.toFixed(2) + '}{100} = ' + aet_val + ' \\text{ mm/day} \\end{aligned} $$';
+            }
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([f_pet, f_aet]).catch(function (err) { console.log('MathJax error:', err.message); });
+            }
+        });
     }
 
     }
@@ -27990,11 +28001,22 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 window.currentPET = 7.5; // fallback
-function fetchMeteoData(dateStr) {
+window.petCache = {};
+function fetchMeteoData(dateStr, overrideLat, overrideLon, callback) {
     var statusEl = document.getElementById('meteo-status');
-    if (statusEl) statusEl.innerText = "Fetching data...";
-    var lat = 41.0167;
-    var lon = 70.1333;
+    if (statusEl && !callback) statusEl.innerText = "Fetching data...";
+    var lat = overrideLat || 41.0167;
+    var lon = overrideLon || 70.1333;
+    var cacheKey = dateStr + '_' + lat.toFixed(3) + '_' + lon.toFixed(3);
+    
+    if (window.petCache[cacheKey]) {
+        window.currentPET = window.petCache[cacheKey];
+        if (statusEl) statusEl.innerText = "Data loaded for " + dateStr + " (PET = " + window.currentPET.toFixed(2) + " mm/day)";
+        if (callback) callback();
+        else if (typeof updateView === 'function') updateView();
+        return;
+    }
+
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&start_date=' + dateStr + '&end_date=' + dateStr + '&daily=et0_fao_evapotranspiration&timezone=auto';
     
     var dateObj = new Date(dateStr);
@@ -28009,8 +28031,10 @@ function fetchMeteoData(dateStr) {
         .then(data => {
             if (data && data.daily && data.daily.et0_fao_evapotranspiration && data.daily.et0_fao_evapotranspiration.length > 0) {
                 window.currentPET = data.daily.et0_fao_evapotranspiration[0] || 7.5;
+                window.petCache[cacheKey] = window.currentPET;
                 if (statusEl) statusEl.innerText = "Data loaded for " + dateStr + " (PET = " + window.currentPET.toFixed(2) + " mm/day)";
-                if (typeof updateView === 'function') updateView();
+                if (callback) callback();
+                else if (typeof updateView === 'function') updateView();
             } else {
                 if (statusEl) statusEl.innerText = "Error fetching data.";
             }
